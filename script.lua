@@ -247,10 +247,30 @@ if authRaw == nil then
   return
 end
 local authBody, authStatus = parseResponse(authRaw)
-local decodedOk, authResponse = pcall(HttpService.JSONDecode, HttpService, authBody)
-if not decodedOk or type(authResponse) ~= "table" or authResponse.ok ~= true then
-  showError("Keyless authorization failed (HTTP " .. tostring(authStatus or "?") .. ").")
-  return
+
+print("AUTH STATUS:", authStatus)
+print("AUTH BODY:", authBody)
+
+local decodedOk, authResponse =
+    pcall(HttpService.JSONDecode, HttpService, authBody)
+
+print("AUTH JSON OK:", decodedOk)
+
+if decodedOk then
+    print("AUTH RESPONSE:", authResponse)
+end
+
+if not decodedOk
+    or type(authResponse) ~= "table"
+    or authResponse.ok ~= true
+then
+    showError(
+        "Auth failed. HTTP: "
+        .. tostring(authStatus or "?")
+        .. "\nResponse: "
+        .. tostring(authBody)
+    )
+    return
 end
 local verdict = authResponse.data
 local message = type(verdict) == "table" and tostring(verdict.message or "") or ""
