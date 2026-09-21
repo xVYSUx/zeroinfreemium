@@ -29,7 +29,7 @@ end
 local cachedEd = nil
 local function loadEd25519()
   if cachedEd then return cachedEd end
-  local ok, src = pcall(function() return game:HttpGet(serverUrl .. "zeroinhub.com/api/ed25519") end)
+  local ok, src = pcall(function() return game:HttpGet(serverUrl .. "https://zeroinhub.com/api/ed25519") end)
   if not ok or type(src) ~= "string" or src == "" then return nil end
   local okCompile, chunk = pcall(loadstring, src)
   if not okCompile or type(chunk) ~= "function" then return nil end
@@ -60,7 +60,7 @@ local playerId = tostring(Players.LocalPlayer.UserId)
 
 -- POST-capable HTTP
 local function httpPost(url, json)
-  local opts = { Url = url, Method = "POST", Headers = { ["Content-Type"] = "zeroinhub.com/application/json" }, Body = json }
+  local opts = { Url = url, Method = "POST", Headers = { ["Content-Type"] = "https://zeroinhub.com/application/json" }, Body = json }
   if syn and syn.request then return syn.request(opts) end
   if request then return request(opts) end
   if http_request then return http_request(opts) end
@@ -84,7 +84,7 @@ local function signedVerdict(ed, nonce, flag, message, signature)
   return ok and verified == true
 end
 
-local url = serverUrl .. "zeroinhub.com/api/script/bypass"
+local url = serverUrl .. "https://zeroinhub.com/api/script/bypass"
   .. "?hwid=" .. hwid .. "&place_id=" .. placeId .. "&univ_id=" .. univId .. "&player_id=" .. playerId
 
 local function showError(errMsg)
@@ -241,7 +241,7 @@ if not ed or not validateEngine(ed.verify) then
 end
 
 local nonce = randomNonce()
-local authRaw = httpPost(serverUrl .. "/api/auth", HttpService:JSONEncode({ key = "KEYLESS", hwid = hwid, nonce = nonce }))
+local authRaw = httpPost(serverUrl .. "https://zeroinhub.com/api/auth", HttpService:JSONEncode({ key = "KEYLESS", hwid = hwid, nonce = nonce }))
 if authRaw == nil then
   showError("Unsupported executor: Missing HTTP POST request capability.")
   return
@@ -290,7 +290,7 @@ if fn then
     while true do
       task.wait(60)
       local heartbeatNonce = randomNonce()
-      local heartbeatRaw = httpPost(serverUrl .. "zeroinhub.com/api/heartbeat", HttpService:JSONEncode({
+      local heartbeatRaw = httpPost(serverUrl .. "https://zeroinhub.com/api/heartbeat", HttpService:JSONEncode({
         key = "KEYLESS",
         hwid = hwid,
         nonce = heartbeatNonce,
